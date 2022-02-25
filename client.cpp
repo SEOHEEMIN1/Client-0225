@@ -20,10 +20,19 @@ int main()
 	SOCKADDR_IN ServerAddr;
 	memset(&ServerAddr, 0, sizeof(ServerAddr));
 	ServerAddr.sin_family = PF_INET;
-	ServerAddr.sin_port = htons(50000);
+	ServerAddr.sin_port = htons(5001);
 	ServerAddr.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-	connect(ServerSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr));
+	if (connect(ServerSocket, (SOCKADDR*)&ServerAddr, sizeof(ServerAddr)) == SOCKET_ERROR)
+	{
+		cout << "connent error : " << GetLastError() << endl;
+		exit(-1);
+	}
+
+	char Message[] = "give me message.";
+	send(ServerSocket, Message, strlen(Message) + 1, 0);
+
+	cout << "Server send : " << Message << endl;
 
 	char Buffer[1024] = { 0, };
 	int RecvLength = recv(ServerSocket, Buffer, 1024, 0);
